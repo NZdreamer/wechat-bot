@@ -8,9 +8,11 @@ const botName = env.BOT_NAME
 
 // 从环境变量中导入联系人白名单
 const aliasWhiteList = env.ALIAS_WHITELIST ? env.ALIAS_WHITELIST.split(',') : []
+console.log('联系人白名单：' + aliasWhiteList)
 
 // 从环境变量中导入群聊白名单
 const roomWhiteList = env.ROOM_WHITELIST ? env.ROOM_WHITELIST.split(',') : []
+console.log('群聊白名单：' + roomWhiteList)
 
 import { getServe } from './serve.js'
 
@@ -22,6 +24,7 @@ import { getServe } from './serve.js'
  * @returns {Promise<void>}
  */
 export async function defaultMessage(msg, bot, ServiceType = 'GPT') {
+  console.log('start running function: defaultMessage......')
   const getReply = getServe(ServiceType)
   const contact = msg.talker() // 发消息人
   const receiver = msg.to() // 消息接收人
@@ -46,6 +49,7 @@ export async function defaultMessage(msg, bot, ServiceType = 'GPT') {
       await room.say(response)
     }
     // 私人聊天，白名单内的直接发送
+    console.log('remark name: ' + remarkName + ', name: ' + name + ', isAlias: ' + isAlias)
     if (isAlias && !room) {
       console.log('🌸🌸🌸 / content: ', content)
       const response = await getReply(content)

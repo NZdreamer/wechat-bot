@@ -9,6 +9,8 @@ import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { defaultMessage } from './wechaty/sendMessage.js'
 
+// log.level('silly'); // Set log level to silly for detailed logs
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const env = dotenv.config().parsed // 环境参数
@@ -56,8 +58,18 @@ async function onFriendShip(friendship) {
  * @returns {Promise<void>}
  */
 async function onMessage(msg) {
-  // 默认消息回复
-  await defaultMessage(msg, bot, serviceType)
+  console.log('onMessage function triggered.')
+  console.log(`Message: ${msg}`)
+
+  try {
+    // 默认消息回复
+    await defaultMessage(msg, bot, serviceType)
+    console.log('Default message processed')
+  } catch (error) {
+    console.error('Error in onMessage:', error)
+    msg.say('Sorry, there was an error processing your message. Please try again later.')
+  }
+
   // 消息分片
   // await shardingMessage(msg,bot)
 }
@@ -81,10 +93,12 @@ bot.on('scan', onScan)
 bot.on('login', onLogin)
 // 登出
 bot.on('logout', onLogout)
-// 收到消息
-bot.on('message', onMessage)
 // 添加好友
 bot.on('friendship', onFriendShip)
+// 收到消息
+console.log('Registering message event handler...')
+bot.on('message', onMessage)
+console.log('Message event handler registered.')
 // 错误
 bot.on('error', (e) => {
   console.error('❌ bot error handle: ', e)
